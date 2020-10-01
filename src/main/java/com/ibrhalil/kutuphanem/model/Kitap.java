@@ -1,7 +1,10 @@
 package com.ibrhalil.kutuphanem.model;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -9,8 +12,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 @Entity
-public class Kitap 
+public class Kitap implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "kitap_id")
@@ -25,17 +34,18 @@ public class Kitap
 	
 	private String seriAdi;
 	
-	@ManyToOne
-	@JoinColumn(name = "yazar_id")
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "yazar_id",nullable = false)
 	private Yazar yazar;
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "yayinevi_id",nullable = false)
 	private Yayinevi yayinevi;
 	
 	
 	private String isbn;
 	
-	
+	@Column(length = 1000)
 	private String aciklama;
 	
 	public Kitap() {

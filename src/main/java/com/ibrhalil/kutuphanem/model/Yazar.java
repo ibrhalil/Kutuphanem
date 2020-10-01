@@ -1,6 +1,6 @@
 package com.ibrhalil.kutuphanem.model;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -9,13 +9,17 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
 
 @Entity
-public class Yazar 
+public class Yazar implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "yazar_id")
@@ -23,10 +27,12 @@ public class Yazar
 	
 	@Column(unique = true)
 	private String ad;
+	
+	@Column(length = 1000)
 	private String aciklama;
 	
-	@OneToMany(mappedBy="yazar",cascade = CascadeType.REMOVE)
-	private List<Kitap> kitapList = new ArrayList<>();
+	@OneToMany(mappedBy = "yazar", orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<Kitap> kitapList;
 	
 	public Yazar() 
 	{

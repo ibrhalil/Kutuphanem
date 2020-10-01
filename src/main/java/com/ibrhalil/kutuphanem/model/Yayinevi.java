@@ -1,5 +1,6 @@
 package com.ibrhalil.kutuphanem.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -11,17 +12,25 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 
 @Entity
-public class Yayinevi 
+public class Yayinevi implements Serializable
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "yayinevi_id")
 	private long id;
 	private String ad;
+	
+	@Column(length = 1000)
 	private String aciklama;
 	
-	//@OneToMany(mappedBy = "yayinevi")
-	//private List<Kitap> kitapList;
+	@OneToMany(mappedBy = "yayinevi", orphanRemoval = true, cascade = CascadeType.ALL)
+	private List<Kitap> kitapList;
 	
 	public Yayinevi() 
 	{
@@ -58,17 +67,17 @@ public class Yayinevi
 	}
 
 	
-	/*
+	
 	public List<Kitap> getKitapList() {
 		return kitapList;
 	}
 
 	public void setKitapList(List<Kitap> kitapList) {
 		this.kitapList = kitapList;
-	}*/
+	}
 
 	@Override
 	public String toString() {
-		return "Yazar [id=" + id + ", ad=" + ad + ", aciklama=" + aciklama + "]";
+		return "Yayınevi [id=" + id + ", ad=" + ad + ", aciklama=" + aciklama + "]";
 	}
 }
