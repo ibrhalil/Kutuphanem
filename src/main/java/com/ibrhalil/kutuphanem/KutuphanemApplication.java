@@ -1,7 +1,5 @@
 package com.ibrhalil.kutuphanem;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +12,10 @@ import com.ibrhalil.kutuphanem.model.Yazar;
 import com.ibrhalil.kutuphanem.repository.KitapRepo;
 import com.ibrhalil.kutuphanem.repository.YayineviRepo;
 import com.ibrhalil.kutuphanem.repository.YazarRepo;
-import com.ibrhalil.kutuphanem.service.KitapService;
 
 @SpringBootApplication
-public class KutuphanemApplication {
+public class KutuphanemApplication 
+{
 
 	@Autowired
 	private KitapRepo kitapRepo;
@@ -28,12 +26,10 @@ public class KutuphanemApplication {
 	@Autowired
 	private YayineviRepo yayineviRepo;
 	
-	@Autowired
-	private KitapService kitapService;
-	
 	@PostConstruct
 	private void OrnekOlustur() 
 	{
+		//Örnek yazar ekleme
 		Yazar yazar1 = new Yazar("Lev N. Tolstoy", "");
 		Yazar yazar2 = new Yazar("Oğuz Atay", "");
 		Yazar yazar3 = new Yazar("George Orwell", "");
@@ -42,7 +38,6 @@ public class KutuphanemApplication {
 		Yazar yazar6 = new Yazar("Aldous Huxley", "");
 		Yazar yazar7 = new Yazar("J. K. Rowling", "Yazma tutkusu 6 yaşlarında başlayan yazar, 1965 İngiltere doğumludur. Kendini bir kalıbın içinde tutmayarak yazmak istediklerini yazıp okuyucularına sunmuştur. 1983 yılında okuldan ayrılarak Exeter Üniversitesi’nde Fransız Dili ve Edebiyatı bölümünü tamamlamıştır.");
 		Yazar yazar8 = new Yazar("Yaşar Kemal", "");
-		
 		
 		yazarRepo.save(yazar1);
 		yazarRepo.save(yazar2);
@@ -53,7 +48,7 @@ public class KutuphanemApplication {
 		yazarRepo.save(yazar7);
 		yazarRepo.save(yazar8);
 		
-		
+		//Örnek yayınevi ekleme
 		Yayinevi yayinevi1 = new Yayinevi("KARBON KİTAPLAR", "");
 		Yayinevi yayinevi2 = new Yayinevi("İLETİŞİM YAYINLARI", "");
 		Yayinevi yayinevi3 = new Yayinevi("CAN YAYINLARI", "");
@@ -66,7 +61,7 @@ public class KutuphanemApplication {
 		yayineviRepo.save(yayinevi4);
 		yayineviRepo.save(yayinevi5);
 		
-		
+		//Örnek kitap ekleme
 		Kitap kitap1 = new Kitap("İnsan Neyle Yaşar?", "", "", yazar1, yayinevi1, "9786057860545", "");
 		Kitap kitap2 = new Kitap("Tutunamayanlar", "", "", yazar2, yayinevi2, "9789754700114", "");
 		Kitap kitap3 = new Kitap("Hayvan Çiftliği", "", "", yazar3, yayinevi3, "9789750719387", "");
@@ -89,19 +84,12 @@ public class KutuphanemApplication {
 		kitapRepo.save(kitap9);
 		kitapRepo.save(kitap10);
 		
-		System.out.println("\n\n\nÖrnekler Veritabanına Eklendi...\n\n\n");
+		System.out.println("\nÖrnekler Veritabanına Eklendi...\n\n\n");
 		
-//		List<Kitap> kitaplar = /*kitapService.kitapAdArama("H");*/kitapRepo.kitapAdinaGoreArama("nama");
-//		for (Kitap kitap : kitaplar) {
-//			System.out.println(kitap);
-//		}
 	}
 	
 	public static void main(String[] args) 
 	{
 		SpringApplication.run(KutuphanemApplication.class, args);
-		
-		
 	}
-
 }

@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.ibrhalil.kutuphanem.service.KitapService;
+import com.ibrhalil.kutuphanem.service.YayineviService;
+import com.ibrhalil.kutuphanem.service.YazarService;
 
 @Controller
 @RequestMapping(path = "/")
@@ -15,10 +17,25 @@ public class MainController
 	@Autowired
 	KitapService kitapService;
 	
-	@GetMapping({"/","/anasayfa","/Anasayfa","/AnaSayfa","/ANASAYFA","/kitap/liste"})
+	@Autowired
+	YazarService yazarService;
+	
+	@Autowired
+	YayineviService yayineviService;
+	
+	@GetMapping({"/","/anasayfa","/Anasayfa","/AnaSayfa","/ANASAYFA"})
 	public String getKitaplar(Model model)
 	{
-		model.addAttribute("listeKitap",kitapService.kitapListe());
+		model.addAttribute("kitapSay",kitapService.kitapSayisi());
+		model.addAttribute("yazarSay", yazarService.yazarSayisi());
+		model.addAttribute("yayineviSay", yayineviService.yayineviSayisi());
 		return "anasayfa";
+	}
+	
+	
+	@GetMapping("/hata")
+	public String getHata()
+	{
+		return "error";
 	}
 }

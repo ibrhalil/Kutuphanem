@@ -1,16 +1,18 @@
 package com.ibrhalil.kutuphanem.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -28,28 +30,33 @@ public class AramaController
 	@Autowired
 	YazarService yazarService;
 	
-	@GetMapping("/arama")
-	public String getArama(Model model) 
+	@InitBinder
+	public void initBinder(WebDataBinder webDataBinder)
 	{
-		model.addAttribute("listeKitap",new ArrayList<Kitap>());
-		return "arama";
+		StringTrimmerEditor trimmerEditor = new StringTrimmerEditor(false);//true -> null olana kadar siler
+		webDataBinder.registerCustomEditor(String.class, trimmerEditor);
 	}
 	
-	@PostMapping("/arama")
-	public String postArama(@RequestParam("tanim") String tanim ,Model model) 
+	@GetMapping("/arama")
+	public String getArama(@RequestParam("q") String tanim, Model model) 
 	{
-		System.out.println("arama Post çalıştı");
+		tanim = tanim.toLowerCase();
+		
 		List<Kitap> tmpKitap = new ArrayList<Kitap>();
+		Set<Kitap> kitaplar = new HashSet<Kitap>();
 		
-		tmpKitap.addAll(kitapSerice.kitapAdArama(tanim));
-		tmpKitap.addAll(kitapSerice.kitapSeriArama(tanim));
-		tmpKitap.addAll(kitapSerice.kitapIsbnArama(tanim));
-		tmpKitap.addAll(yazarService.kitapYazarArama(tanim));
-		
-		Set<Kitap> kitaplar = tmpKitap.stream().collect(Collectors.toSet());
-		
+		if(tanim.length()>2)
+		{
+			tmpKitap.addAll(kitapSerice.kitapAdArama(tanim));
+			tmpKitap.addAll(kitapSerice.kitapSeriArama(tanim));
+			tmpKitap.addAll(kitapSerice.kitapIsbnArama(tanim));
+			tmpKitap.addAll(yazarService.kitapYazarArama(tanim));
+			
+			kitaplar = tmpKitap.stream().collect(Collectors.toSet());
+		}
+
 		model.addAttribute("listeKitap",kitaplar);
-		model.addAttribute("tanim",tanim);
+		model.addAttribute("q",tanim);
 		
 		return "arama";
 	}

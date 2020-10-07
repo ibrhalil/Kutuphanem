@@ -10,6 +10,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 public class Yazar implements Serializable
@@ -26,9 +28,12 @@ public class Yazar implements Serializable
 	private long id;
 	
 	@Column(unique = true)
+	@NotNull(message = "Boş Bırakmayınız.")
+	@Size(min = 3, max = 40, message = "3 ila 40 karakter arası olmalıdır.")
 	private String ad;
 	
 	@Column(length = 1000)
+	@Size(max = 999, message = "1000 karakterden fazla girmeyiniz.")
 	private String aciklama;
 	
 	@OneToMany(mappedBy = "yazar", orphanRemoval = true, cascade = CascadeType.ALL)
@@ -36,11 +41,11 @@ public class Yazar implements Serializable
 	
 	public Yazar() 
 	{
-		// TODO Auto-generated constructor stub
+
 	}
 	
 	public Yazar(String ad, String aciklama) {
-		this.ad = ad;
+		this.ad = ad.toLowerCase();
 		this.aciklama = aciklama;
 	}
 
@@ -57,7 +62,7 @@ public class Yazar implements Serializable
 	}
 
 	public void setAd(String ad) {
-		this.ad = ad;
+		this.ad = ad.toLowerCase();
 	}
 
 	public String getAciklama() {
@@ -75,10 +80,42 @@ public class Yazar implements Serializable
 	public void setKitapList(List<Kitap> kitapList) {
 		this.kitapList = kitapList;
 	}
+	
+	public long YazarKitapSayisi()
+	{
+		return kitapList != null ? kitapList.size() : 0 ;
+	}
 
 	@Override
 	public String toString() {
 		return "Yazar [id=" + id + ", ad=" + ad + ", aciklama=" + aciklama + "]";
 	}
-	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((ad == null) ? 0 : ad.hashCode());
+		result = prime * result + (int) (id ^ (id >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Yazar other = (Yazar) obj;
+		if (ad == null) {
+			if (other.ad != null)
+				return false;
+		} else if (!ad.equals(other.ad))
+			return false;
+		if (id != other.id)
+			return false;
+		return true;
+	}	
 }

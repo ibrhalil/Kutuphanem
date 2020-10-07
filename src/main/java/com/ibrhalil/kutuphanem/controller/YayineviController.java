@@ -2,111 +2,114 @@ package com.ibrhalil.kutuphanem.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.propertyeditors.StringTrimmerEditor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ibrhalil.kutuphanem.model.Yayinevi;
-import com.ibrhalil.kutuphanem.model.Yazar;
 import com.ibrhalil.kutuphanem.service.YayineviService;
 
 @Controller
-@RequestMapping(path = "/")
+@RequestMapping(path = "/yayinevi")
 public class YayineviController 
 {
 	@Autowired
 	YayineviService yayineviService;
 	
-	@GetMapping("/yayinevi")
-	public String getYayinevi(@RequestParam long id, Model model)
+	//Boşluk silme
+	@InitBinder
+	public void initBinder(WebDataBinder webDataBinder)
+	{
+		StringTrimmerEditor trimmerEditor = new StringTrimmerEditor(false);
+		webDataBinder.registerCustomEditor(String.class, trimmerEditor);
+	}
+	
+	@GetMapping("/{yayineviId}")
+	public String getYayinevi(@PathVariable("yayineviId") long id, Model model)
 	{
 		Yayinevi yayinevi = yayineviService.getYayinevi(id);
 		model.addAttribute("yayinevi",yayinevi);
 		return "yayinevi";
 	}
 	
-	@GetMapping("/yayinevi/liste")
+	@GetMapping("/liste")
 	public String yayineviListe(Model model) 
 	{
 		List<Yayinevi> yayineviListe = yayineviService.yayineviListe();
-		
 		model.addAttribute("yayineviListe", yayineviListe);
-		
 		return "listeYayinevi";
 	}
 	
-	@GetMapping("/yayinevi/ekle")
+	@GetMapping("/ekle")
 	public String yayineviEkle(Model model) 
 	{
 		Yayinevi yeniYayinevi = new Yayinevi();
-		model.addAttribute("yeniYayinevi", yeniYayinevi);
+		model.addAttribute("yayinevi", yeniYayinevi);
 		return "ekleYayinevi";
 	}
 	
-	@PostMapping("/yayinevi/ekle")
-	public String yayineviEkleKontrol(@ModelAttribute("yeniYayinevi") Yayinevi yayinevi, Model model)
+	@PostMapping("/ekle")
+	public String yayineviEkleGuncelle(@Valid @ModelAttribute("yayinevi") Yayinevi yayinevi,BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes)
 	{
-		if(yayinevi.getAd().length()>3)
+		if(bindingResult.hasFieldErrors())
 		{
-			model.addAttribute("hata", false);
-			model.addAttribute("onay",true);
-			yayineviService.yayineviEkle(yayinevi);
+			return "ekleYayinevi";
 		}
 		else 
 		{
-			model.addAttribute("hata", true);
+			long yeni = yayinevi.getId();
+			
+			yayineviService.yayineviEkleGuncelle(yayinevi);
+			
+			if(yeni!=0)
+			{
+				redirectAttributes.addAttribute("mesaj", yayinevi.getAd().toUpperCase()+" adlı yayinevi güncellendi");
+			}
+			else
+			{
+				redirectAttributes.addAttribute("mesaj", yayinevi.getAd().toUpperCase()+" adlı yayinevi kaydedildi");
+			}
+			
+			return "redirect:liste";
 		}
 		
-		return "ekleYayinevi";
 	}
 	
-	@PostMapping("/yayinevi/sil")
-	public String yayineviSil(@RequestParam("idSil")long id, Model model) 
+	@PostMapping("/sil")
+	public String yayineviSil(@RequestParam("idSil")long id, Model model, RedirectAttributes redirectAttributes) 
 	{
 		Yayinevi yayinevi = yayineviService.getYayinevi(id);
-		if(yayinevi!=null)
+		if(yayinevi !=null )
 		{
 			yayineviService.yayineviSil(id);
-			model.addAttribute("yayinevi", yayinevi);
+			redirectAttributes.addAttribute("mesaj", yayinevi.getAd().toUpperCase()+" adlı yayinevi silindi");
+			return "redirect:liste";
 		}
 		else
 		{
-			model.addAttribute("hata", true);
-			
+			return "error";
 		}
 		
-		return "silYayinevi";
 	}
 	
-	@GetMapping("/yayinevi/duzenle")
-	public String yayineviGuncelle(@RequestParam("id") long id, Model model)
+	@GetMapping("/duzenle/{yayineviId}")
+	public String yayineviGuncelle(@PathVariable("yayineviId") long id, Model model)
 	{
 		Yayinevi yayinevi = yayineviService.getYayinevi(id);
 		model.addAttribute("yayinevi",yayinevi);
-		
-		return "guncelleYayinevi";
+		return "ekleYayinevi";
 	}
-	
-	@PostMapping("/yayinevi/duzenle")
-	public String yayineviGuncelle(@ModelAttribute("yayinevi") Yayinevi guncelYayinevi, Model model)
-	{
-		
-		if(guncelYayinevi != null && guncelYayinevi.getAd().length()>3)
-		{
-			model.addAttribute("yayinevi", guncelYayinevi);
-			yayineviService.yayineviGuncelle(guncelYayinevi);
-			model.addAttribute("onay",true);
-		}
-		else
-		{
-			model.addAttribute("hata", true);
-		}
-		return "guncelleYayinevi";
-	} 
-
 }

@@ -2,6 +2,8 @@ package com.ibrhalil.kutuphanem.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +28,17 @@ public class YazarService
 		{
 			yazarlar.add(yazar);
 		}
+		
+		Collections.sort(yazarlar,new Comparator<Yazar>() {
+
+			@Override
+			public int compare(Yazar y1, Yazar y2) 
+			{
+				return y1.getAd().compareToIgnoreCase(y2.getAd());
+			}
+			
+		});
+		
 		return yazarlar;
 	}
 	
@@ -45,10 +58,19 @@ public class YazarService
 	}
 	
 	//yazar ekle
-	public void yazarEkle(Yazar yazar)
+	public void yazarEkleGuncelle(Yazar yazar)
 	{
 		if(yazar!=null)
-			yazarRepo.save(yazar);
+		{
+			if(getYazar(yazar.getId()) == null)
+			{
+				yazarRepo.save(yazar);
+			}
+			else
+			{
+				yazarGuncelle(yazar);
+			}
+		}
 	}
 
 	//yazar id göre sil
@@ -63,6 +85,7 @@ public class YazarService
 		yazarRepo.yazarGuncelle(yazar.getAd(),yazar.getAciklama(),yazar.getId());
 	}
 
+	//arama -> yazar ad göre kitapları getirme
 	public List<Kitap> kitapYazarArama(String tanim) 
 	{
 		List<Kitap> kitaplar = new ArrayList<Kitap>();
@@ -72,5 +95,10 @@ public class YazarService
 			kitaplar.addAll(yazar.getKitapList());
 		}
 		return kitaplar;
+	}
+
+	public long yazarSayisi() 
+	{
+		return yazarRepo.count();
 	}
 }

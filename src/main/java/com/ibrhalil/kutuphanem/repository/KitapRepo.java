@@ -17,7 +17,7 @@ public interface KitapRepo extends CrudRepository<Kitap, Long>
 	@Query("select k from Kitap k where k.ad like %?1%")
 	List<Kitap> kitapAdinaGoreArama(String ad);
 	
-	@Query("select k from Kitap k where k.seriAdi like %?1%")
+	@Query("select k from Kitap k where k.seriAdi like ?1%")
 	List<Kitap> kitapSeriGoreArama(String seriAdi);
 	
 	@Query("select k from Kitap k where k.isbn like ?1%")

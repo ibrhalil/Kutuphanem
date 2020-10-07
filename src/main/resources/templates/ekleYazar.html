@@ -1,102 +1,141 @@
 <!doctype html>
-<html lang="tr">
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
 
 <head>
+
     <title>Kutuphanem</title>
+    
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <meta name="description" content="Spring Boot, JPA - Hibernate, Thymeleaf, H2 Database, Bootstrap kullanarak geliştirmiş olduğum kütüphane örnek uygulama." />
+    <meta name="keywords" content="spring, spring boot, jpa, hibernate, html, thymeleaf, h1, database, java, programlama, yazılım, geliştirme, örnek uygulama">
+  	<meta name="author" content="halil aydın">
+  	
+  	<meta http-equiv="refresh" content="150">
+	
+	<!-- CSS -->
+	<link th:href="@{/css/style.css}" rel="stylesheet" />
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        
 </head>
 
 <body>
 
-    <div class="container">
-        <div class="row mt-4">
-        	
-        </div>
-        <div class="row">
-            <ul class="nav nav-pills nav-fill justify-content-center">
-            	<li class="nav-item">
-                  <a class="nav-link" href="/anasayfa">Anasayfa</a>
-                </li>
-                <li class="nav-item dropdown">
-				    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Kitap</a>
-				    <div class="dropdown-menu">
-				      <a class="dropdown-item" href="/kitap/liste">Kitap Liste</a>
-				      <a class="dropdown-item" href="/kitap/ekle">Kitap Ekle</a>
-				    </div>
-				</li>
-                <li class="nav-item dropdown">
-				    <a class="nav-link active dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Yazar</a>
-				    <div class="dropdown-menu">
-				      <a class="dropdown-item" href="/yazar/liste">Yazar Liste</a>
-				      <a class="dropdown-item" href="/yazar/ekle">Yazar Ekle</a>
-				    </div>
-				</li>
-				<li class="nav-item dropdown">
-				    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Yayınevi</a>
-				    <div class="dropdown-menu">
-				      <a class="dropdown-item" href="/yayinevi/liste">Yayınevi Liste</a>
-				      <a class="dropdown-item" href="/yayinevi/ekle">Yayınevi Ekle</a>
-				    </div>
-				</li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/arama">Ara</a>
-                </li>
-              </ul>
-        </div>
-        <div class="row mt-4">
-        
-        <div th:if="${hata}" class="alert alert-danger alert-dismissible fade show" role="alert">
-		  <strong>Hata !</strong> Eklem Başarısız.
-		  <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-		    <span aria-hidden="true">&times;</span>
-		  </button>
+	<div class="container-fluid h-100">
+		<div class="row">
+			<nav class="navbar navbar-expand-lg navbar-light w-100"
+				style="background-color: #e3f2fd;">
+				<a class="navbar-brand" href="/">Kütüphanem</a>
+				<button class="navbar-toggler" type="button" data-toggle="collapse"
+					data-target="#navbarSupportedContent"
+					aria-controls="navbarSupportedContent" aria-expanded="false"
+					aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+
+				<div class="collapse navbar-collapse" id="navbarSupportedContent">
+					<ul class="navbar-nav mr-auto">
+						<li class="nav-item"><a class="nav-link" href="/">Anasayfa<span
+								class="sr-only">(current)</span></a></li>
+
+						<li class="nav-item dropdown"><a
+							class="nav-link dropdown-toggle" href="#"
+							id="navbarDropdownKitap" role="button" data-toggle="dropdown"
+							aria-haspopup="true" aria-expanded="false">Kitap</a>
+							<div class="dropdown-menu" aria-labelledby="navbarDropdownKitap">
+								<a class="dropdown-item" href="/kitap/liste">Kitaplar</a> <a
+									class="dropdown-item" href="/kitap/ekle">Kitap Ekle</a>
+							</div></li>
+
+						<li class="nav-item active dropdown"><a
+							class="nav-link dropdown-toggle" href="#"
+							id="navbarDropdownYazar" role="button" data-toggle="dropdown"
+							aria-haspopup="true" aria-expanded="false">Yazar</a>
+							<div class="dropdown-menu" aria-labelledby="navbarDropdownYazar">
+								<a class="dropdown-item" href="/yazar/liste">Yazarlar</a> <a
+									class="dropdown-item" href="/yazar/ekle">Yazar Ekle</a>
+							</div></li>
+
+						<li class="nav-item dropdown"><a
+							class="nav-link dropdown-toggle" href="#"
+							id="navbarDropdownYayinevi" role="button" data-toggle="dropdown"
+							aria-haspopup="true" aria-expanded="false">Yayinevi</a>
+							<div class="dropdown-menu"
+								aria-labelledby="navbarDropdownYayinevi">
+								<a class="dropdown-item" href="/yayinevi/liste">Yayinevleri</a>
+								<a class="dropdown-item" href="/yayinevi/ekle">Yayinevi Ekle</a>
+							</div></li>
+
+					</ul>
+					<form class="form-inline my-2 my-lg-0" action="/arama">
+						<input class="form-control mr-sm-2" type="search" size="23"
+							name="q" required placeholder="Kitap - Seri - Yazar - ISBN"
+							aria-label="Search">
+						<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Ara</button>
+					</form>
+				</div>
+			</nav>
 		</div>
-        
-        </div>
-        <div class="row mt-4">
-        	<div class="col-6">
-	            <form method="post" action="#" th:action="@{/yazar/ekle}" th:object="${yeniYazar}">
+
+
+
+
+		<div class="row pt-4">
+
+			<div class="col-12 col-lg-6">
+
+				<form method="post" action="#" th:action="@{/yazar/ekle}" th:object="${yazar}">
 				  <div class="form-group">
-				    <label for="yazarAd">Yazar Ad</label>
+				    <label for="yazarAd">Ad Soyad</label>
 				    <input type="text" class="form-control" id="yazarAd" th:field="*{ad}" required="required">
+				    <span th:if="${#fields.hasErrors('ad')}" th:errors="*{ad}" class="text-danger">Ad Hata</span>
+				    <script th:if="${#fields.hasErrors('ad')}" type="text/javascript">
+							document.getElementById("yazarAd").classList.add("is-invalid");
+					</script>
 				  </div>
-				  
 				  
 				  <div class="form-group">
 				    <label for="yazarAciklama">Açıklama</label>
 				    <textarea class="form-control" id="yazarAciklama" rows="3" th:field="*{aciklama}"></textarea>
+				    <span th:if="${#fields.hasErrors('aciklama')}" th:errors="*{aciklama}" class="text-danger">Aciklama Hata</span>
+				    <script th:if="${#fields.hasErrors('aciklama')}" type="text/javascript">
+							document.getElementById("yazarAciklama").classList.add("is-invalid");
+					</script>
 				  </div>
 				  
 				  <div class="form-group">
-				    	<input type="submit" value="Kaydet" class="form-control">
+				  		<input type="hidden" th:field="*{id}" id="yazarId">
+				    	<input type="submit" value="Kaydet" class="form-control btn btn-success">
 				  </div>
 				</form>
-			</div>
-        </div>
-        <div class="row mt-4">
-        	<div th:if="${onay}" class="alert alert-success" role="alert">
-			  	<span th:text="${yeniYazar.ad}" ></span> Başarıyla eklendi.
-			</div>
-        </div>
-    </div>
 
-    <!-- Optional JavaScript -->
+			</div>
+
+		</div>
+
+	</div>
+	
+	<div id="snackbar"><span th:text="${param.mesaj}" class="alert alert-success text-capitalize"></span></div>
+	
+	<script th:if="${param.mesaj!=null}">
+		
+		window.onload = function mesajYukleme() {
+		  var x = document.getElementById("snackbar");
+		  x.className = "show";
+		  setTimeout(function(){ x.className = x.className.replace("show", ""); }, 7700);
+		}
+	</script>
+
+
+<!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous">
-    </script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous">
-    </script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
-        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous">
-    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 
 </html>
